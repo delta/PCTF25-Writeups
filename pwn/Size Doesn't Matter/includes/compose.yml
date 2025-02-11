@@ -1,0 +1,11 @@
+services:
+  server:
+    container_name: pwn.3.size_doesnt_matter
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "7003:1337"
+    privileged: true
+    env_file:
+      - .env

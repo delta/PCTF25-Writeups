@@ -1,0 +1,11 @@
+services:
+  server:
+    container_name: pwn.1.interesting
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "7001:1337"
+    privileged: true
+    env_file:
+      - .env

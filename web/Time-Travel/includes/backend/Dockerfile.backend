@@ -1,0 +1,30 @@
+FROM python:3.9-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y \
+    gcc \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY backend/requirements.txt .
+RUN pip install -r requirements.txt
+
+RUN echo 'bind = "0.0.0.0:5002"\n\
+workers = 4\n\
+timeout = 120\n\
+keepalive = 5\n\
+max_requests = 1000\n\
+max_requests_jitter = 100\n\
+worker_class = "sync"\n\
+loglevel = "debug"\n\
+errorlog = "-"\n\
+accesslog = "-"' > gunicorn.conf.py
+
+COPY . .
+COPY frontend ./frontend
+
+EXPOSE 5002
+
+
+CMD ["gunicorn", "-c", "gunicorn.conf.py", "backend.app:app"]

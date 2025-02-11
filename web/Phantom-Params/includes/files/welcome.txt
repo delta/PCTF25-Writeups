@@ -1,0 +1,3 @@
+Welcome to PhantomBook - The Secure File Sharing Platform!
+
+This is a public file that everyone can read. Our platform implements strict role-based access control to ensure the security of sensitive files.

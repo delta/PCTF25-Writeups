@@ -1,0 +1,11 @@
+services:
+  server:
+    container_name: pwn.4.dupocalypse
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "7004:1337"
+    privileged: true
+    env_file:
+      - .env

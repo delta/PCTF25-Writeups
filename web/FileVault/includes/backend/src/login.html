@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login - FileVault</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-r from-green-400 to-blue-500 min-h-screen flex items-center justify-center">
+  <div class="max-w-md w-full mx-4">
+    <div class="bg-white bg-opacity-90 backdrop-filter backdrop-blur-md rounded-xl shadow-xl p-8">
+      <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-gray-800">Welcome Back</h1>
+        <p class="text-lg text-gray-600 mt-2">Sign in to your FileVault account</p>
+      </div>
+      
+      <form id="loginForm" class="space-y-6">
+        <div>
+          <label for="username" class="block text-gray-700 font-semibold mb-2">Username</label>
+          <input id="username" type="text" required placeholder="Enter your username"
+                 class="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500">
+        </div>
+        
+        <div>
+          <label for="password" class="block text-gray-700 font-semibold mb-2">Password</label>
+          <input id="password" type="password" required placeholder="Enter your password"
+                 class="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500">
+        </div>
+
+        <div>
+          <button type="submit"
+                  class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-md transition duration-200">
+            Sign In
+          </button>
+        </div>
+      </form>
+
+      <div class="mt-6 text-center">
+        <p class="text-gray-700">
+          Don't have an account? 
+          <a href="/register" class="text-green-600 hover:text-green-700 font-semibold">Sign up</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Check if user is already logged in
+    document.addEventListener('DOMContentLoaded', function() {
+      fetch('/api/check-auth', {
+        method: 'GET',
+        credentials: 'include'
+      })
+      .then(response => {
+        if (response.ok) {
+          window.location.href = '/';
+        }
+      });
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password
+        })
+      })
+      .then(response => {
+        if (response.ok) {
+          window.location.href = '/';
+        } else {
+          return response.json();
+        }
+      })
+      .then(data => {
+        if (data && data.error) {
+          alert(data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred during login');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - FileVault</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gradient-to-br from-blue-800 to-purple-800 min-h-screen">
+  <!-- Navigation Bar -->
+  <nav class="bg-white bg-opacity-90 backdrop-blur-md shadow-md">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex justify-between items-center py-4">
+        <h1 class="text-2xl font-bold text-gray-800">FileVault</h1>
+        <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded">
+          Logout
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-6 py-12">
+    <div class="bg-white bg-opacity-90 backdrop-blur-md rounded-xl shadow-xl p-8">
+      <div class="flex justify-between items-center mb-8">
+        <h2 class="text-3xl font-bold text-gray-800">Your Files</h2>
+        <label class="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded inline-block">
+          Upload File
+          <input type="file" class="hidden" id="fileInput">
+        </label>
+      </div>
+
+      <div id="filesList" class="space-y-4">
+        <!-- Files will be populated here -->
+      </div>
+    </div>
+  </main>
+
+  <!-- JavaScript Functionality -->
+  <script>
+    // Check authentication on page load
+    document.addEventListener('DOMContentLoaded', function () {
+      checkAuth();
+      loadFiles();
+    });
+
+    function checkAuth() {
+      fetch('/api/check-auth', {
+        method: 'GET',
+        credentials: 'include'
+      })
+      .then(response => {
+        if (!response.ok) {
+          window.location.href = '/login';
+        }
+      });
+    }
+
+    function downloadFile(fileId) {
+      fetch(`/api/files/${fileId}/download`, {
+        method: 'GET',
+        credentials: 'include',
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Failed to download file: ${response.status}`);
+        }
+
+        // Extract the filename from the headers
+        const contentDisposition = response.headers.get('Content-Disposition');
+        let filename = 'downloaded_file'; // Default filename
+        if (contentDisposition && contentDisposition.includes('filename=')) {
+          filename = contentDisposition.split('filename=')[1].replace(/['"]/g, '');
+        }
+
+        // Return both the response blob and the filename
+        return response.blob().then(blob => ({ blob, filename }));
+      })
+      .then(({ blob, filename }) => {
+        // Create a download link
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove(); // Clean up the DOM
+      })
+      .catch(error => {
+        console.error('Error downloading file:', error);
+        alert('Failed to download file');
+      });
+    }
+
+    function loadFiles() {
+      fetch('/api/files', {
+        method: 'GET',
+        credentials: 'include'
+      })
+      .then(response => response.json())
+      .then(files => {
+        const filesList = document.getElementById('filesList');
+        filesList.innerHTML = '';
+
+        if (files.length === 0) {
+          filesList.innerHTML = '<p class="text-gray-500 text-center py-4">No files uploaded yet</p>';
+          return;
+        }
+
+        files.forEach(file => {
+          const fileElement = document.createElement('div');
+          fileElement.className = 'flex justify-between items-center p-4 bg-gray-50 rounded-lg shadow-sm';
+          fileElement.innerHTML = `
+            <div class="flex flex-col">
+              <span class="text-gray-800 font-medium">${file.name}</span>
+              ${file.uploadedAt ? `<span class="text-gray-500 text-sm">Uploaded: ${file.uploadedAt}</span>` : ''}
+            </div>
+            <div>
+              <button onclick="downloadFile('${file.id}')" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded">
+                Download
+              </button>
+            </div>
+          `;
+          filesList.appendChild(fileElement);
+        });
+      })
+      .catch(error => {
+        console.error('Error loading files:', error);
+        const filesList = document.getElementById('filesList');
+        filesList.innerHTML = '<p class="text-red-500 text-center py-4">Error loading files</p>';
+      });
+    }
+
+    document.getElementById('fileInput').addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include'
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.file_id) {
+          loadFiles();
+        } else {
+          alert('Upload failed');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Upload failed');
+      });
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', function () {
+      fetch('/api/logout', {
+        method: 'POST',
+        credentials: 'include'
+      })
+      .then(() => {
+        window.location.href = '/login';
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    });
+  </script>
+</body>
+
+</html>

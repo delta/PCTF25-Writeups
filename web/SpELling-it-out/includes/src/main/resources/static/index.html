@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Directory | Modern HR Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-building"></i>
+            <h1>HR Portal</h1>
+        </div>
+        <ul class="nav-links">
+            <li class="active">
+                <i class="fas fa-search"></i>
+                <span>Employee Search</span>
+            </li>
+            <li>
+                <i class="fas fa-users"></i>
+                <span>Directory</span>
+            </li>
+            <li>
+                <i class="fas fa-chart-bar"></i>
+                <span>Analytics</span>
+            </li>
+        </ul>
+    </nav>
+
+    <main class="content">
+        <header class="top-bar">
+            <div class="search-container">
+                <form id="search-form">
+                    <div class="search-wrapper">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="username" name="username" placeholder="Search employees..." required>
+                        <button type="submit">Search</button>
+                    </div>
+                </form>
+            </div>
+            <div class="user-profile">
+                <i class="fas fa-bell"></i>
+                <div class="avatar">
+                    <img src="https://via.placeholder.com/32" alt="Profile">
+                </div>
+            </div>
+        </header>
+
+        <div class="dashboard">
+            <div class="dashboard-header">
+                <h2>Employee Directory</h2>
+                <div class="view-controls">
+                    <button class="view-btn active" data-view="grid">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                    <button class="view-btn" data-view="list">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="results" class="results-grid">
+                <!-- Results will be populated here -->
+            </div>
+        </div>
+    </main>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

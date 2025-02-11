@@ -1,0 +1,32 @@
+version: "3"
+services:
+  apache-proxy:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend-server
+    networks:
+      - backend-network
+
+  backend-server:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    deploy:
+      resources:
+        limits:
+          pids: 1000
+    expose:
+      - "8080"
+    networks:
+      - backend-network
+    security_opt:
+      - "no-new-privileges:true"
+      - "seccomp:unconfined"
+
+networks:
+  backend-network:
+    driver: bridge

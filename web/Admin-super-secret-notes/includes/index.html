@@ -1,0 +1,138 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Secret Notes</title>
+        
+        <style>
+        body {
+        font-family: 'Arial', sans-serif;
+        background-color: #fafafa;
+        /* background-image: url("https://images.pexels.com/photos/978487/pexels-photo-978487.jpeg?auto=compress&cs=tinysrgb&w=1200"); */
+        background-size: cover;
+        background-position: center;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    .container {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 20px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        padding: 40px;
+        width: 100%;
+        max-width: 500px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    h1 {
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 2rem;
+        font-weight: 600;
+    }
+
+    p {
+        color: #7f8c8d;
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+
+    textarea {
+        width: 100%;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        resize: vertical;
+        min-height: 150px;
+        font-family: monospace;
+        font-size: 0.9rem;
+        background-color: #f9f9f9;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    textarea:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+        outline: none;
+    }
+
+    button {
+        width: 100%;
+        padding: 15px;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        font-size: 1rem;
+        font-weight: 500;
+        margin-top: 15px;
+    }
+
+    button:hover {
+        background-color: #2980b9;
+        transform: translateY(-2px);
+    }
+
+    button:active {
+        transform: translateY(0);
+    }
+
+    #secret {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #e9f5ff;
+        border-radius: 10px;
+        color: #2c3e50;
+        text-align: center;
+        font-family: monospace;
+        font-size: 0.9rem;
+        border: 1px solid #3498db;
+    }
+
+    iframe {
+        width: 100%;
+        border: none;
+        border-radius: 10px;
+        margin-top: 20px;
+        background-color: #fff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+        </style>
+        
+    </head>
+    <body>
+        <div class="container">
+            <h1>Secret Note Viewer</h1>
+            <p>Can you steal the admin's secret note?</p>
+            <div id="content">
+                <form action="/" method="GET">
+                    <textarea name="note" placeholder="Enter your HTML note here..."></textarea>
+                    <br><br>
+                    <button type="submit">View Note</button>
+                </form>
+            </div>
+            <div id="secret"></div>
+        </div>
+        <script>
+            const note = new URL(window.location.href).searchParams.get('note');
+            if (note) {
+                const frame = document.createElement('iframe');
+                frame.srcdoc = note;
+                frame.sandbox = '';
+                frame.width = '100%';
+                document.getElementById('content').appendChild(frame);
+            }
+            const secret = localStorage.getItem('flag') || "flag{test_flag}";
+            document.getElementById('secret').innerHTML = secret;
+        </script>
+    </body>
+    </html>

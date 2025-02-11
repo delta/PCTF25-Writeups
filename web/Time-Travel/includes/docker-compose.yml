@@ -1,0 +1,32 @@
+  version: '3.8'
+
+  networks:
+    app-network:
+      driver: bridge
+
+  services:
+    timeserver:
+      build:
+        context: ./backend
+        dockerfile: Dockerfile.timeserver
+      ports:
+        - "5001:5001"
+      networks:
+        - app-network
+      env_file:
+        - .env.time
+
+    backend:
+      build:
+        context: .
+        dockerfile: backend/Dockerfile.backend
+      ports:
+        - "5002:5002"
+      depends_on:
+        - timeserver
+      networks:
+        - app-network
+      env_file:
+        - .env
+      
+ 

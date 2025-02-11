@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Register - FileVault</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-blue-800 to-purple-800 min-h-screen flex items-center justify-center">
+  <div class="max-w-md w-full mx-4">
+    <div class="bg-white bg-opacity-90 backdrop-filter backdrop-blur-lg rounded-xl shadow-2xl p-8">
+      <div class="text-center mb-8">
+        <h1 class="text-4xl font-extrabold text-gray-800">Register</h1>
+        <p class="text-lg text-gray-600">Create your FileVault account</p>
+      </div>
+      <form id="registerForm" class="space-y-6">
+        <div>
+          <label for="username" class="block text-gray-700 font-semibold mb-2">Username</label>
+          <input id="username" type="text" required 
+                 class="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500" 
+                 placeholder="Enter your username">
+        </div>
+        <div>
+          <label for="password" class="block text-gray-700 font-semibold mb-2">Password</label>
+          <input id="password" type="password" required 
+                 class="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500" 
+                 placeholder="Enter your password">
+        </div>
+        <div>
+          <button type="submit" 
+                  class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-md transition duration-200 ease-in-out">
+            Create Account
+          </button>
+        </div>
+      </form>
+      <div class="mt-6 text-center">
+        <p class="text-gray-700">
+          Already have an account? 
+          <a href="/login" class="text-purple-600 hover:text-purple-700 font-semibold">Sign in</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password
+        })
+      })
+      .then(response => {
+        if (response.ok) {
+          window.location.href = '/login';
+        } else {
+          return response.json();
+        }
+      })
+      .then(data => {
+        if (data && data.error) {
+          alert(data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred during registration');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+About PhantomBook
+
+PhantomBook is a secure file sharing system that implements role-based access control. Only administrators have access to sensitive files, while regular users can access public documents.
+
+Our security team has ensured that the system is completely secure against common web vulnerabilities. Feel free to try to break it!

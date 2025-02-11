@@ -1,0 +1,9 @@
+
+gunicorn
+Flask
+gunicorn
+python-dotenv
+pycryptodome
+pyjwt
+
+

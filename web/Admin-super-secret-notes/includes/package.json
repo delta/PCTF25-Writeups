@@ -1,0 +1,21 @@
+{
+  "name": "chall_4",
+  "version": "1.0.0",
+  "main": "bot.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "fastify": "^5.2.1",
+    "node-html-parser": "^5.0.0",
+    "puppeteer": "^22.15.0"
+  }
+}

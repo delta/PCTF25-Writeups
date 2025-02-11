@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhantomBook - Secure File Sharing</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div id="auth-section">
+            <!-- Login Form -->
+            <div id="login-form" class="form-container">
+                <h2>PhantomBook Login</h2>
+                <form onsubmit="handleLogin(event)">
+                    <input id="login-email" placeholder="username" required>
+                    <input type="password" id="login-password" placeholder="Password" required>
+                    <button type="submit">Login</button>
+                </form>
+                <p>Need an account? <a href="#" onclick="toggleForms()">Register</a></p>
+            </div>
+
+            <!-- Register Form -->
+            <div id="register-form" class="form-container hidden">
+                <h2>Create Account</h2>
+                <form onsubmit="handleRegister(event)">
+                    <input id="register-email" placeholder="username" required>
+                    <input type="password" id="register-password" placeholder="Password" required>
+                    <button type="submit">Register</button>
+                </form>
+                <p>Already have an account? <a href="#" onclick="toggleForms()">Login</a></p>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="hidden">
+            <div class="header">
+                <h2>PhantomBook Dashboard</h2>
+                <button onclick="handleLogout()">Logout</button>
+            </div>
+            
+            <div class="file-explorer">
+                <h3>Available Files</h3>
+                <ul>
+                    <li><button onclick="requestFile('welcome.txt')">welcome.txt</button></li>
+                    <li><button onclick="requestFile('about.txt')">about.txt</button></li>
+                </ul>
+            </div>
+
+            <div class="file-content">
+                <h3>File Content</h3>
+                <div id="content-display"></div>
+                <div id="error-display" class="error"></div>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

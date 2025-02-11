@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time-Travel</title>
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: url('https://plus.unsplash.com/premium_photo-1664298300286-a26e2746435d?q=80&w=2942&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            margin: 0;
+            padding: 0;
+            color: #fff;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 48px;
+            margin-top: 20px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        p {
+            font-size: 20px;
+            line-height: 1.6;
+            color: #fff;
+        }
+
+        .btn-custom {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-transform: uppercase;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 20px;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>“Messing up with time is a bad idea ”</h1>
+        <button class="btn btn-custom" id="fetchTokenButton">THE FLAG IS NOT HERE </button>
+        <button class="btn btn-custom" id="validateButton">TRY LOOKING HERE </button>
+        <div id="result" class="result"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+          let contentserver, timeserver;
+
+        fetch("/config")
+        .then(response => response.json())
+        .then(config => {
+            contentserver = config.contentserver;
+            timeserver = config.timeserver;
+         })
+        .catch(error => console.error("Error fetching config:", error));
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        function fetchToken() {
+            fetch(`${contentserver}/challenge`, {
+                method: 'GET',
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.cookie = `session=${data.token}; path=/;`;
+            })
+            .catch(error => console.error('Error fetching token:', error));
+        }
+
+        function validateToken() {
+            const token = getCookie('session');
+            if (!token) {
+                document.getElementById('result').innerHTML = 'Session token not found.';
+                return;
+            }
+
+            fetch(timeserver)
+            .then(response => response.json())
+            .then(time_info => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', contentserver + '/validate');
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                const body = {
+                    token: token,
+                    timestamp: time_info['timestamp'],
+                    signature: time_info['signature'],
+                    timeserver: timeserver
+                };
+                xhr.send(JSON.stringify(body));
+                xhr.onload = () => {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        document.getElementById('result').innerHTML = xhr.responseText;
+                    } else {
+                        document.getElementById('result').innerHTML = 'Validation failed';
+                    }
+                };
+            })
+            .catch(error => console.error('Error fetching time:', error));
+        }
+
+        document.getElementById('fetchTokenButton').addEventListener('click', fetchToken);
+        document.getElementById('validateButton').addEventListener('click', validateToken);
+    </script>
+</body>
+</html>

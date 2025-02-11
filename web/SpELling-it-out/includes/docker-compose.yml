@@ -1,0 +1,24 @@
+version: '3.8'
+services:
+  spring-app:
+    build: .
+    ports:
+      - "4000:8080"
+    depends_on:
+      - mongodb
+    read_only: true
+    restart: always
+    deploy:
+      resources:
+        limits:
+          pids: 1000
+    tmpfs: /tmp
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/vulndb
+
+  mongodb:
+    image: mongo:4.4
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+ 
